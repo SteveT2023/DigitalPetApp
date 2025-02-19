@@ -1,26 +1,114 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 void main() {
   runApp(MaterialApp(
-    home: DigitalPetApp(),
+    home: SetPetNameScreen(),
   ));
 }
 
+class SetPetNameScreen extends StatefulWidget {
+  const SetPetNameScreen({super.key});
+
+  @override
+  _SetPetNameScreenState createState() => _SetPetNameScreenState();
+}
+
+class _SetPetNameScreenState extends State<SetPetNameScreen> {
+  final TextEditingController _nameController = TextEditingController();
+
+  void _confirmName() {
+    if (_nameController.text.isNotEmpty) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DigitalPetApp(petName: _nameController.text),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Set Pet Name'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TextField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: 'Enter Pet Name',
+              ),
+            ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: _confirmName,
+              child: Text('Confirm Name'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class DigitalPetApp extends StatefulWidget {
-  const DigitalPetApp({super.key});
+  final String petName;
+
+  const DigitalPetApp({super.key, required this.petName});
 
   @override
   _DigitalPetAppState createState() => _DigitalPetAppState();
 }
 
 class _DigitalPetAppState extends State<DigitalPetApp> {
-  String petName = "Your Pet";
   int happinessLevel = 50;
   int hungerLevel = 50;
+  Timer? _hungerTimer;
+  Timer? _checkConditionsTimer;
+  bool _lose = false;
 
-  // Function to increase happiness and update hunger when playing with the pet
+  @override
+  void initState() {
+    super.initState();
+    _startHungerTimer();
+    _startCheckConditionsTimer();
+  }
+
+  @override
+  void dispose() {
+    _hungerTimer?.cancel();
+    _checkConditionsTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startHungerTimer() {
+    _hungerTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      setState(() {
+        hungerLevel = (hungerLevel + 5).clamp(0, 100);
+        _updateHappiness();
+      });
+    });
+  }
+
+  void _startCheckConditionsTimer() {
+    _checkConditionsTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (hungerLevel >= 100 || happinessLevel <= 0) {
+        setState(() {
+          _lose = true;
+        });
+        _hungerTimer?.cancel();
+        _checkConditionsTimer?.cancel();
+      }
+    });
+  }
+
   void _playWithPet() {
     setState(() {
       happinessLevel = (happinessLevel + 10).clamp(0, 100);
@@ -28,7 +116,6 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     });
   }
 
-  // Function to decrease hunger and update happiness when feeding the pet
   void _feedPet() {
     setState(() {
       hungerLevel = (hungerLevel - 10).clamp(0, 100);
@@ -36,7 +123,6 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     });
   }
 
-  // Update happiness based on hunger level
   void _updateHappiness() {
     if (hungerLevel < 30) {
       happinessLevel = (happinessLevel - 20).clamp(0, 100);
@@ -45,7 +131,6 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     }
   }
 
-  // Increase hunger level slightly when playing with the pet
   void _updateHunger() {
     hungerLevel = (hungerLevel + 5).clamp(0, 100);
     if (hungerLevel > 100) {
@@ -68,11 +153,11 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
   // Determine the pet's icon based on happiness level
   String _getPetIcon() {
     if (happinessLevel > 70) {
-      return 'assets/Happy.png'; // Happy
+      return 'file:///Users/clr.img/Downloads/Happy.png'; // Happy
     } else if (happinessLevel >= 30) {
-      return 'assets/Neutral.png'; // Neutral
+      return 'file:///Users/clr.img/Downloads/Neutral.png'; // Neutral
     } else {
-      return 'assets/Mad.png'; // Unhappy
+      return 'file:///Users/clr.img/Downloads/Unhappy.png'; // Unhappy
     }
   }
 
@@ -84,41 +169,46 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
       ),
       backgroundColor: _getBackgroundColor(),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Name: $petName',
-              style: TextStyle(fontSize: 20.0),
-            ),
-            SizedBox(height: 16.0),
-            Text(
-              'Happiness Level: $happinessLevel',
-              style: TextStyle(fontSize: 20.0),
-            ),
-            SizedBox(height: 16.0),
-            Text(
-              'Hunger Level: $hungerLevel',
-              style: TextStyle(fontSize: 20.0),
-            ),
-            SizedBox(height: 32.0),
-            Image.asset(
-              _getPetIcon(),
-              height: 100,
-              width: 100,
-            ),
-            SizedBox(height: 32.0),
-            ElevatedButton(
-              onPressed: _playWithPet,
-              child: Text('Play with Your Pet'),
-            ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: _feedPet,
-              child: Text('Feed Your Pet'),
-            ),
-          ],
-        ),
+        child: _lose
+            ? Text(
+                'Game Over',
+                style: TextStyle(fontSize: 30.0, color: Colors.red),
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'Name: ${widget.petName}',
+                    style: TextStyle(fontSize: 20.0),
+                  ),
+                  SizedBox(height: 16.0),
+                  Text(
+                    'Happiness Level: $happinessLevel',
+                    style: TextStyle(fontSize: 20.0),
+                  ),
+                  SizedBox(height: 16.0),
+                  Text(
+                    'Hunger Level: $hungerLevel',
+                    style: TextStyle(fontSize: 20.0),
+                  ),
+                  SizedBox(height: 32.0),
+                  Image.network(
+                    _getPetIcon(),
+                    height: 100,
+                    width: 100,
+                  ),
+                  SizedBox(height: 32.0),
+                  ElevatedButton(
+                    onPressed: _playWithPet,
+                    child: Text('Play with Your Pet'),
+                  ),
+                  SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: _feedPet,
+                    child: Text('Feed Your Pet'),
+                  ),
+                ],
+              ),
       ),
     );
   }
