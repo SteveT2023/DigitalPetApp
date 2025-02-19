@@ -57,11 +57,22 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
   // Determine the background color based on happiness level
   Color _getBackgroundColor() {
     if (happinessLevel > 70) {
-      return Colors.green; // Happy
+      return const Color.fromARGB(255, 186, 252, 188); // Happy
     } else if (happinessLevel >= 30) {
-      return Colors.yellow; // Neutral
+      return const Color.fromARGB(255, 211, 197, 72); // Neutral
     } else {
-      return Colors.red; // Unhappy
+      return const Color.fromARGB(255, 255, 147, 140); // Unhappy
+    }
+  }
+
+  // Determine the pet's icon based on happiness level
+  String _getPetIcon() {
+    if (happinessLevel > 70) {
+      return 'assets/Happy.png'; // Happy
+    } else if (happinessLevel >= 30) {
+      return 'assets/Neutral.png'; // Neutral
+    } else {
+      return 'assets/Mad.png'; // Unhappy
     }
   }
 
@@ -89,6 +100,12 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
             Text(
               'Hunger Level: $hungerLevel',
               style: TextStyle(fontSize: 20.0),
+            ),
+            SizedBox(height: 32.0),
+            Image.asset(
+              _getPetIcon(),
+              height: 100,
+              width: 100,
             ),
             SizedBox(height: 32.0),
             ElevatedButton(
