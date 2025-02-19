@@ -153,11 +153,11 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
   // Determine the pet's icon based on happiness level
   String _getPetIcon() {
     if (happinessLevel > 70) {
-      return 'file:///Users/clr.img/Downloads/Happy.png'; // Happy
+      return 'assets/Happy.png'; // Happy
     } else if (happinessLevel >= 30) {
-      return 'file:///Users/clr.img/Downloads/Neutral.png'; // Neutral
+      return 'assets/Neutral.png'; // Neutral
     } else {
-      return 'file:///Users/clr.img/Downloads/Unhappy.png'; // Unhappy
+      return 'assets/Mad.png'; // Unhappy
     }
   }
 
