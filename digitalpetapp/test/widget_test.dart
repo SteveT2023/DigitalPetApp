@@ -27,4 +27,18 @@ void main() {
     expect(find.text('0'), findsNothing);
     expect(find.text('1'), findsOneWidget);
   });
+
+  testWidgets('Set pet name and verify it is displayed',
+      (WidgetTester tester) async {
+    // Build the SetPetNameScreen and trigger a frame.
+    await tester.pumpWidget(MaterialApp(home: SetPetNameScreen()));
+
+    // Enter a pet name.
+    await tester.enterText(find.byType(TextField), 'Buddy');
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pumpAndSettle();
+
+    // Verify that the DigitalPetApp screen is displayed with the pet name.
+    expect(find.text('Name: Buddy'), findsOneWidget);
+  });
 }
