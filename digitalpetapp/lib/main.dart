@@ -4,19 +4,67 @@ import 'package:flutter/material.dart';
 
 void main() {
   runApp(MaterialApp(
-    home: DigitalPetApp(),
+    home: SetPetNameScreen(),
   ));
 }
 
+class SetPetNameScreen extends StatefulWidget {
+  @override
+  _SetPetNameScreenState createState() => _SetPetNameScreenState();
+}
+
+class _SetPetNameScreenState extends State<SetPetNameScreen> {
+  final TextEditingController _nameController = TextEditingController();
+
+  void _confirmName() {
+    if (_nameController.text.isNotEmpty) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DigitalPetApp(petName: _nameController.text),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Set Pet Name'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TextField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: 'Enter Pet Name',
+              ),
+            ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: _confirmName,
+              child: Text('Confirm Name'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class DigitalPetApp extends StatefulWidget {
-  const DigitalPetApp({super.key});
+  final String petName;
+
+  const DigitalPetApp({super.key, required this.petName});
 
   @override
   _DigitalPetAppState createState() => _DigitalPetAppState();
 }
 
 class _DigitalPetAppState extends State<DigitalPetApp> {
-  String petName = "Your Pet";
   int happinessLevel = 50;
   int hungerLevel = 50;
 
@@ -88,7 +136,7 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Name: $petName',
+              'Name: ${widget.petName}',
               style: TextStyle(fontSize: 20.0),
             ),
             SizedBox(height: 16.0),
@@ -102,7 +150,7 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
               style: TextStyle(fontSize: 20.0),
             ),
             SizedBox(height: 32.0),
-            Image.asset(
+            Image.network(
               _getPetIcon(),
               height: 100,
               width: 100,
