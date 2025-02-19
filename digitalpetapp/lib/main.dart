@@ -47,7 +47,7 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
 
   void _startCheckConditionsTimer() {
     _checkConditionsTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (hungerLevel >= 100 || happinessLevel <= 0) { // Updated condition
+      if (hungerLevel >= 100 || happinessLevel <= 0) {
         setState(() {
           _lose = true;
         });
