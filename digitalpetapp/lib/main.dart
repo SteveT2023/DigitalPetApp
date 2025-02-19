@@ -54,12 +54,24 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     }
   }
 
+  // Determine the background color based on happiness level
+  Color _getBackgroundColor() {
+    if (happinessLevel > 70) {
+      return Colors.green; // Happy
+    } else if (happinessLevel >= 30) {
+      return Colors.yellow; // Neutral
+    } else {
+      return Colors.red; // Unhappy
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Digital Pet'),
       ),
+      backgroundColor: _getBackgroundColor(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
