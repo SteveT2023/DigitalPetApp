@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 
@@ -87,12 +89,33 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     }
   }
 
+  Color _getBackgroundColor() {
+    if (happinessLevel > 70) {
+      return const Color.fromARGB(255, 186, 252, 188);
+    } else if (happinessLevel >= 30) {
+      return const Color.fromARGB(255, 211, 197, 72);
+    } else {
+      return const Color.fromARGB(255, 255, 147, 140);
+    }
+  }
+
+  String _getPetIcon() {
+    if (happinessLevel > 70) {
+      return 'assets/Happy.png';
+    } else if (happinessLevel >= 30) {
+      return 'assets/Neutral.png';
+    } else {
+      return 'assets/Mad.png';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Digital Pet'),
       ),
+      backgroundColor: _getBackgroundColor(),
       body: Center(
         child: _lose
             ? Text(
@@ -115,6 +138,12 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
                   Text(
                     'Hunger Level: $hungerLevel',
                     style: TextStyle(fontSize: 20.0),
+                  ),
+                  SizedBox(height: 32.0),
+                  Image.asset(
+                    _getPetIcon(),
+                    height: 100,
+                    width: 100,
                   ),
                   SizedBox(height: 32.0),
                   ElevatedButton(
